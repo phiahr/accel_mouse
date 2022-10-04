@@ -90,6 +90,12 @@ struct ContentView: View {
             print("Left Mouse click")
             nManager.sendLeftMouseClick()
         }
+        .onTapGesture(count: 2) {
+                print("Double tapped!")
+            }
+        .onLongPressGesture {
+            print("Long press -> right click")
+        }
         
     }
     

@@ -147,6 +147,9 @@ class NetworkManager: NSObject, URLSessionDelegate
         
         manager.deviceMotionUpdateInterval = frequency
         print("Handle motion updates")
+        
+        var old_vel_x = 0.0
+        var old_dist_x = 0.0
         manager.startDeviceMotionUpdates(to: .main) { (motion, error) in
             // Handle device motion updates
             // Get accelerometer sensor data
@@ -175,15 +178,19 @@ class NetworkManager: NSObject, URLSessionDelegate
             let g_y = motion?.gravity.y
             let g_z = motion?.gravity.z
             
+            var vel_x = old_vel_x + a_x! * self.frequency
+            var dist_x = old_dist_x + vel_x * self.frequency
 //            print("pitch: ", pitch!, "roll: ", roll!, "yaw: ", yaw!)
+//            print("yaw: ", (yaw! * 180 / .pi))
+            print(a_x)
             
-            
-            print("yaw: ", (yaw! * 180 / .pi))
+            old_vel_x = vel_x
+            old_dist_x = dist_x
             let attitude = Attitude(attitude: motion!.attitude)
             guard let data = try? JSONEncoder().encode(attitude) else {
                 return
             }
-            self.send(uploadData: data)
+            //self.send(uploadData: data)
         }
     }
     

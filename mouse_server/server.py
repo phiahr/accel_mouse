@@ -15,7 +15,6 @@ async def echo(websocket):
         data = json.loads(message)
 
         if "leftMouseClick" in data:
-            print("leftMouseClick")
             pyautogui.click()
         else:
             pitch = -data['pitch']
@@ -25,14 +24,14 @@ async def echo(websocket):
 
             # Dynamic calculation for screen size
             dist_x = round((120/7)*(yaw)+(width/2))
-            if dist_x > 1200:
-                dist_x = 1200
+            if dist_x > width:
+                dist_x = width
             elif (dist_x < 0):
                 dist_x = 0
 
             dist_y = round((80/7)*(pitch)+(height/2))
-            if dist_y > 800:
-                dist_y = 800
+            if dist_y > height:
+                dist_y = height
             elif (dist_y < 0) :
                 dist_y = 0
             pyautogui.moveTo(int(dist_x), int(dist_y))
