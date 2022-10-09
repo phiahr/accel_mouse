@@ -4,18 +4,53 @@ import websockets
 import pyautogui
 import json
 from screeninfo import get_monitors
+import platform
+import time
 
+ctrlKey = "command" if platform.uname()[0]=='Darwin' else "ctrl"
 
 width = get_monitors()[0].width
 height = get_monitors()[0].height
 
+def missionCtrl():
+    if platform.uname()[0]=='Darwin':
+        pyautogui.keyDown("ctrl")
+        pyautogui.press("up")
+        pyautogui.keyUp("ctrl")
+    else:
+        pyautogui.keyDown("alt")
+        pyautogui.press("tab")
+        pyautogui.keyUp("alt")
+
+def switchToLaser():
+    pyautogui.keyDown(ctrlKey)
+    pyautogui.press("l")
+    pyautogui.keyUp(ctrlKey)
+
+def switchTab():
+    pyautogui.keyDown(ctrlKey)
+    pyautogui.press("tab")
+    pyautogui.keyUp(ctrlKey)
 
 async def echo(websocket):
     async for message in websocket:
         data = json.loads(message)
 
         if "leftMouseClick" in data:
-            pyautogui.click()
+            if data["leftMouseClick"]:
+                pyautogui.click()
+            elif data["rightMouseClick"]:
+                pyautogui.rightClick()
+            elif data['mouseDoubleClick']:
+                pyautogui.doubleClick()
+        elif 'switchTab' in data:
+            if data['switchTab']:
+                switchTab()
+            elif data['switchToLaser']:
+                switchToLaser()
+            elif data['missionCtrl']:
+                missionCtrl()
+            
         else:
             pitch = -data['pitch']
             yaw = -data['yaw']

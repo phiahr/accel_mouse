@@ -8,9 +8,7 @@
 import Foundation
 
 struct MouseClick: Codable {
-    let leftMouseClick: Bool
-    let rightMouseClick: Bool
-//    init(leftMouseClick: Bool, RightMouseClick: Bool){
-//
-//    }
+    var leftMouseClick: Bool
+    var rightMouseClick: Bool
+    var mouseDoubleClick: Bool
 }

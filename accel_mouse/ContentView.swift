@@ -9,6 +9,8 @@ import SwiftUI
 
 struct ContentView: View {
     var nManager = NetworkManager()
+    var attitude = AttitudeCalculator()
+
 //    var m = Manager()
     @State private var presentAlert = false
     @State private var ipAddress: String = "172.20.10.2"
@@ -30,6 +32,39 @@ struct ContentView: View {
 //            }
 //                .padding()
             Spacer()
+            HStack{
+                Spacer()
+                Button("Mission Control") {
+                    nManager.sendMissionCtrl()
+                }
+//                    .font(Font.title)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.purple)
+                    .cornerRadius(40)
+                    .foregroundColor(Color.white)
+                Button("Switch \n tab") {
+                    nManager.sendSwitchTab()
+                }
+//                    .font(Font.title)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.purple)
+                    .cornerRadius(40)
+                    .foregroundColor(Color.white)
+//                    .padding(10)
+                Button("Laser pointer") {
+                    nManager.sendSwitchToLaser()
+                }
+//                    .font(Font.title)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.purple)
+                    .cornerRadius(40)
+                    .foregroundColor(Color.white)
+//                Spacer()
+//                    .padding(10)
+            }
             HStack{
                 Button(ipAddress) {
                             presentAlert = true
@@ -86,15 +121,17 @@ struct ContentView: View {
             
         }
         .contentShape(Rectangle())
+        .onTapGesture(count: 2) {
+            print("Double tapped!")
+            nManager.sendMouseDoubleClick()
+        }
         .onTapGesture {
             print("Left Mouse click")
             nManager.sendLeftMouseClick()
         }
-        .onTapGesture(count: 2) {
-                print("Double tapped!")
-            }
         .onLongPressGesture {
             print("Long press -> right click")
+            nManager.sendRightMouseClick()
         }
         
     }

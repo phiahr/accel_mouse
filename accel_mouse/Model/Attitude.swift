@@ -18,4 +18,10 @@ struct Attitude: Codable {
         roll = attitude.roll * 180 / .pi
         yaw = attitude.yaw * 180 / .pi
     }
+    init(roll: Double, pitch: Double, yaw: Double){
+        // in degrees
+        self.pitch = pitch * 180 / .pi
+        self.roll = roll * 180 / .pi
+        self.yaw = yaw * 180 / .pi
+    }
 }
