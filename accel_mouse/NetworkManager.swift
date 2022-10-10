@@ -146,13 +146,15 @@ class NetworkManager: NSObject, URLSessionDelegate
 
     let tau = 0.075
 //    var a = 0.0
+    var old_roll = 0.0
+    var old_pitch = 0.0
     var old_yaw = 0.0
-    
 
     func handleMotionUpdates()
     {
 //        a = tau / (tau+frequency)
         let k = 0.95
+        let k2 = 0.2
         manager.deviceMotionUpdateInterval = frequency
         print("Handle motion updates")
         
@@ -173,8 +175,8 @@ class NetworkManager: NSObject, URLSessionDelegate
             let a_z = -(motion.userAcceleration.z+g_z)
             
             // Get gyroscope sensor data
-            let q = motion.rotationRate.x
-            let p = -motion.rotationRate.y
+            let q = -motion.rotationRate.x
+            let p = motion.rotationRate.y
             let r = -motion.rotationRate.z
             
             // Get magnetometer sensor data
@@ -195,13 +197,21 @@ class NetworkManager: NSObject, URLSessionDelegate
             D = 2 + (31/60) + (48/3600)
             D = D * (.pi/180)
             
-            let estimated_pitch = asin(a_x)
-            let estimated_roll = atan(a_y/a_z)
+            let accel_pitch = asin(a_x)
+            let accel_roll = atan(a_y/a_z)
             
-            let Xm = m_x*cos(motion.attitude.pitch)+m_y*sin(motion.attitude.roll)*sin(motion.attitude.pitch)+m_z*cos(motion.attitude.roll)*sin(motion.attitude.pitch)
-            let Ym = m_y*cos(motion.attitude.roll)-m_z*sin(motion.attitude.roll)
+            let gyro_roll = self.old_roll + p * self.frequency
+            let gyro_pitch = self.old_pitch + q * self.frequency
             
-            var mag_yaw = -atan2(Ym,Xm)
+            
+            
+            let estimated_roll = /*k2 * gyro_roll + (1-k) * */(accel_roll)
+            let estimated_pitch = /*k2 * gyro_pitch + (1-k) * */(accel_pitch)
+            
+            let Xm = m_x*cos(estimated_pitch)+m_y*sin(estimated_roll)*sin(estimated_pitch)+m_z*cos(estimated_roll)*sin(estimated_pitch)
+            let Ym = m_y*cos(estimated_roll)-m_z*sin(estimated_roll)
+            
+            var mag_yaw = D-atan2(Ym,Xm)
             
             if !self.isCalibrated
             {
@@ -216,22 +226,9 @@ class NetworkManager: NSObject, URLSessionDelegate
             
             let estimated_yaw = k * gyro_yaw + (1-k) * (mag_yaw)
             
-            
-            if abs(self.old_yaw-estimated_yaw) * 180 / .pi > 20
-            {
-                print(">>>>>>>>>>>HELLOWORLD<<<<<<<<<<<<")
-            }
-//            print("magyaw: ", mag_yaw)
-//            print("gyroyaw: ", gyro_yaw)
-//            print("estimyaw: ", estimated_yaw)
-//            print("realyaw: ", motion.attitude.yaw)
-            
+            self.old_roll = estimated_roll
+            self.old_pitch = estimated_pitch
             self.old_yaw = estimated_yaw
-            
-//            print(p, ", ", q, ", ", r)
-//            let estimated_yaw = self.old_yaw + (-q!) * self.frequency
-//            self.old_yaw = estimated_yaw
-//            print("Estim yaw, ", estimated_yaw * 180 / .pi)
             
             var attitude: Attitude!
             if self.useEstimatedValues

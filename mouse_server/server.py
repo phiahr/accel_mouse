@@ -33,8 +33,8 @@ def switchTab():
     pyautogui.keyUp(ctrlKey)
 
 def scroll(offset):
-    print(offset)
-    pyautogui.scroll(float(offset/20))
+    # print(offset)
+    pyautogui.scroll(float(offset/15))
 
 async def echo(websocket):
     async for message in websocket:
