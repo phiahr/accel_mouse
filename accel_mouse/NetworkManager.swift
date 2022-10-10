@@ -15,6 +15,12 @@ class NetworkManager: NSObject, URLSessionDelegate
     let frequency = 0.2 // 0.01
     private var webSocket : URLSessionWebSocketTask!
     
+    var yawBias = 0.0
+    var realYawBias = 0.0
+
+    var isCalibrated = false
+    
+    var useEstimatedValues = false
     
     var audioLevel : Float = 0.0
     
@@ -48,8 +54,8 @@ class NetworkManager: NSObject, URLSessionDelegate
         
         //Connect and hanles handshake
         webSocket.resume()
-        startMotionEstimates()
-//        startMotionUpdates()
+//        startMotionEstimates()
+        startMotionUpdates()
 //        startMagnetometer()
 //        startGyrometer()
 //        startAccelerometers()
@@ -130,89 +136,115 @@ class NetworkManager: NSObject, URLSessionDelegate
     {
         print("Stop motion Updates")
         manager.stopDeviceMotionUpdates()
-        stopMotionEstimates()
+        isCalibrated = false
+//        stopMotionEstimates()
     }
     
     
     var roll: Double!
     var pitch: Double!
+
+    let tau = 0.075
+//    var a = 0.0
+    var old_yaw = 0.0
+    
+
     func handleMotionUpdates()
     {
-        
+//        a = tau / (tau+frequency)
+        let k = 0.95
         manager.deviceMotionUpdateInterval = frequency
         print("Handle motion updates")
         
         //        var old_vel_x = 0.0
         //        var old_dist_x = 0.0
-        manager.startDeviceMotionUpdates(to: .main) { (motion, error) in
+        manager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: .main) { (motion, error) in
             // Handle device motion updates
+            guard let motion = motion else {return}
+
+            // Get gravity vector
+            let g_x = motion.gravity.x
+            let g_y = motion.gravity.y
+            let g_z = motion.gravity.z
+            
             // Get accelerometer sensor data
-            let a_x = motion?.userAcceleration.x
-            let a_y = motion?.userAcceleration.y
-            let a_z = motion?.userAcceleration.z
+            let a_y = motion.userAcceleration.x+g_x
+            let a_x = -(motion.userAcceleration.y+g_y)
+            let a_z = -(motion.userAcceleration.z+g_z)
             
             // Get gyroscope sensor data
-            let r = motion?.rotationRate.x
-            let p = motion?.rotationRate.y
-            let q = motion?.rotationRate.z
+            let q = motion.rotationRate.x
+            let p = -motion.rotationRate.y
+            let r = -motion.rotationRate.z
             
             // Get magnetometer sensor data
-            let accuracy = motion?.magneticField.accuracy
-            let m_x = motion?.magneticField.field.x
-            let m_y = motion?.magneticField.field.y
-            let m_z = motion?.magneticField.field.z
-            print("Accuracy: ", accuracy?.rawValue)
+            let accuracy = motion.magneticField.accuracy
+            let m_y = motion.magneticField.field.x
+            let m_x = motion.magneticField.field.y
+            let m_z = -motion.magneticField.field.z
+            print("Accuracy: ", accuracy.rawValue)
             // Get attitude orientation
-            self.pitch = motion!.attitude.pitch
-            self.roll = motion!.attitude.roll
-            let yaw = motion!.attitude.yaw
+            let roll = motion.attitude.roll
+            let pitch = motion.attitude.pitch
+            var yaw = motion.attitude.yaw
+//            self.pitch = motion.attitude.pitch
+//            self.roll = motion.attitude.roll
+//            let yaw = motion.attitude.yaw
             
-            // Get gravity vector
-            //            let g_x = motion?.gravity.x
-            //            let g_y = motion?.gravity.y
-            //            let g_z = motion?.gravity.z
-            //
-            //            var vel_x = old_vel_x + a_x! * self.frequency
-            //            var dist_x = old_dist_x + vel_x * self.frequency
-            //            print("pitch: ", pitch!, "roll: ", roll!, "yaw: ", yaw!)
-            //            print("yaw: ", (yaw! * 180 / .pi))
-            //            print(a_x)
-            
-            //            old_vel_x = vel_x
-            //            old_dist_x = dist_x
-            //            print("yaw: ", yaw)
             var D: Double
             D = 2 + (31/60) + (48/3600)
             D = D * (.pi/180)
             
+            let estimated_pitch = asin(a_x)
+            let estimated_roll = atan(a_y/a_z)
+            
+            let Xm = m_x*cos(motion.attitude.pitch)+m_y*sin(motion.attitude.roll)*sin(motion.attitude.pitch)+m_z*cos(motion.attitude.roll)*sin(motion.attitude.pitch)
+            let Ym = m_y*cos(motion.attitude.roll)-m_z*sin(motion.attitude.roll)
+            
+            var mag_yaw = -atan2(Ym,Xm)
+            
+            if !self.isCalibrated
+            {
+                self.yawBias = mag_yaw
+                self.realYawBias = yaw
+                self.isCalibrated = true
+            }
+            
+            mag_yaw -= self.yawBias
+                        
+            let gyro_yaw = self.old_yaw + r * self.frequency
+            
+            let estimated_yaw = k * gyro_yaw + (1-k) * (mag_yaw)
             
             
-            print(self.roll)
-            print(cos(self.roll))
+            if abs(self.old_yaw-estimated_yaw) * 180 / .pi > 20
+            {
+                print(">>>>>>>>>>>HELLOWORLD<<<<<<<<<<<<")
+            }
+//            print("magyaw: ", mag_yaw)
+//            print("gyroyaw: ", gyro_yaw)
+//            print("estimyaw: ", estimated_yaw)
+//            print("realyaw: ", motion.attitude.yaw)
             
-            print(m_y!)
-            print(m_x!)
-            print(m_z!)
-            //            print(sin(roll)*m_z)
-            //            let nom = cos(roll)*m_y - sin(roll)*m_z
-            ////            print(nom)
-            //            let denom = cos(pitch)*m_x+sin(roll)*sin(pitch)*m_y+cos(roll)*sin(pitch)*m_z
-            ////            print(denom)
-            ////            print(D)
-            //
-            //
-            //            let psi_hat = D-atan(nom/denom)
-            //            print("yaw: ", yaw, "estim yaw: ", psi_hat)
-            
-            let estimated_pitch = asin(-a_y!)
-            print("estimated pitch: ", estimated_pitch, " ", self.pitch)
-            let estimated_roll = atan(-a_x!/a_z!)
-            let estimated_yaw = self.old_yaw + (-q!) * self.frequency
             self.old_yaw = estimated_yaw
-            print("Estim yaw, ", estimated_yaw * 180 / .pi)
-            print("real yaw", yaw * 180 / .pi)
-//            let attitude = Attitude(attitude: motion!.attitude)
-            let attitude = Attitude(roll: estimated_roll, pitch: estimated_pitch, yaw: -estimated_yaw)
+            
+//            print(p, ", ", q, ", ", r)
+//            let estimated_yaw = self.old_yaw + (-q!) * self.frequency
+//            self.old_yaw = estimated_yaw
+//            print("Estim yaw, ", estimated_yaw * 180 / .pi)
+            
+            var attitude: Attitude!
+            if self.useEstimatedValues
+            {
+                attitude = Attitude(roll: estimated_roll, pitch: estimated_pitch, yaw: -estimated_yaw)
+            }
+            else
+            {
+                yaw -= self.realYawBias
+                attitude = Attitude(roll: roll, pitch: pitch, yaw: yaw)
+//                attitude = Attitude(attitude: motion.attitude)
+            }
+            
             guard let data = try? JSONEncoder().encode(attitude) else {
                 return
             }
@@ -276,18 +308,17 @@ class NetworkManager: NSObject, URLSessionDelegate
         }
         RunLoop.current.add(self.timer, forMode: .default)
     }
-    
-    func stopMotionEstimates()
-    {
-        self.motion2.stopAccelerometerUpdates()
-        self.motion2.stopGyroUpdates()
-        self.motion2.stopMagnetometerUpdates()
-        timer.invalidate()
-    }
+
+//    func stopMotionEstimates()
+//    {
+//        self.motion2.stopAccelerometerUpdates()
+//        self.motion2.stopGyroUpdates()
+//        self.motion2.stopMagnetometerUpdates()
+//        timer.invalidate()
+//    }
     
     let motion2 = CMMotionManager()
     var timer: Timer!
-    var old_yaw = 0.0
     func startAccelerometers() {
         // Make sure the accelerometer hardware is available.
         if self.motion2.isAccelerometerAvailable {

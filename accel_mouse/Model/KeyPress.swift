@@ -11,4 +11,6 @@ struct KeyPress: Codable {
     var switchTab: Bool
     var switchToLaser: Bool
     var missionCtrl: Bool
+    var leftArrow: Bool
+    var rightArrow: Bool
 }

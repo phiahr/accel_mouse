@@ -11,4 +11,5 @@ struct MouseClick: Codable {
     var leftMouseClick: Bool
     var rightMouseClick: Bool
     var mouseDoubleClick: Bool
+    var scroll: Double
 }

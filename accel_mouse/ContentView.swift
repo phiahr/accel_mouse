@@ -9,12 +9,14 @@ import SwiftUI
 
 struct ContentView: View {
     var nManager = NetworkManager()
-    var attitude = AttitudeCalculator()
+//    var attitude = AttitudeCalculator()
 
 //    var m = Manager()
     @State private var presentAlert = false
     @State private var ipAddress: String = "172.20.10.2"
     @State private var isConnect = true
+    @State private var offset = CGSize.zero
+    @State private var useEstimatedValues = false
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -31,7 +33,41 @@ struct ContentView: View {
 ////                nManager.send(attitude:)
 //            }
 //                .padding()
+            HStack{
+                Spacer()
+                Image(systemName: "airtag.fill")
+                    .resizable()
+                    .frame(width: 42.0, height: 42.0)
+                    .foregroundColor(useEstimatedValues ?  Color.gray : Color.black)
+                    .padding()
+                    .onTapGesture(perform: {
+                        nManager.useEstimatedValues.toggle()
+                        useEstimatedValues.toggle()
+                    })
+            }
             Spacer()
+            HStack{
+                Button {
+                    print("left arrow")
+                    nManager.sendLeftArrow()
+                } label: {
+                    Image(systemName: "arrow.left.square.fill")
+                        .resizable()
+                        .frame(width: 150.0, height: 75.0)
+                        .foregroundColor(Color.mint)
+                        .padding()
+                }
+                Button {
+                    print("right arrow")
+                    nManager.sendRightArrow()
+                } label: {
+                    Image(systemName: "arrow.right.square.fill")
+                        .resizable()
+                        .frame(width: 150.0, height: 75.0)
+                        .foregroundColor(Color.mint)
+                        .padding()
+                }
+            }
             HStack{
                 Spacer()
                 Button("Mission Control") {
@@ -133,6 +169,16 @@ struct ContentView: View {
             print("Long press -> right click")
             nManager.sendRightMouseClick()
         }
+        .gesture(
+            DragGesture()
+            .onChanged({ gesture in
+                offset = gesture.translation
+            })
+            .onEnded { _ in
+                print("offset: ", offset)
+                nManager.sendScroll(offset: offset.height)
+                }
+        )
         
     }
     

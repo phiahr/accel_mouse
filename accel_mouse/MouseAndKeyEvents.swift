@@ -12,7 +12,7 @@ extension NetworkManager
 {
     func sendLeftMouseClick()
     {
-        let leftMouseClick = MouseClick(leftMouseClick: true, rightMouseClick: false, mouseDoubleClick: false)
+        let leftMouseClick = MouseClick(leftMouseClick: true, rightMouseClick: false, mouseDoubleClick: false, scroll: 0.0)
         
         guard let uploadData = try? JSONEncoder().encode(leftMouseClick) else {
             return
@@ -22,7 +22,7 @@ extension NetworkManager
     
     func sendRightMouseClick()
     {
-        let rightMouseClick = MouseClick(leftMouseClick: false, rightMouseClick: true, mouseDoubleClick: false)
+        let rightMouseClick = MouseClick(leftMouseClick: false, rightMouseClick: true, mouseDoubleClick: false, scroll: 0.0)
         
         guard let uploadData = try? JSONEncoder().encode(rightMouseClick) else {
             return
@@ -32,7 +32,7 @@ extension NetworkManager
     
     func sendMouseDoubleClick()
     {
-        let mouseDoubleClick = MouseClick(leftMouseClick: false, rightMouseClick: false, mouseDoubleClick: true)
+        let mouseDoubleClick = MouseClick(leftMouseClick: false, rightMouseClick: false, mouseDoubleClick: true, scroll: 0.0)
         
         guard let uploadData = try? JSONEncoder().encode(mouseDoubleClick) else {
             return
@@ -40,9 +40,39 @@ extension NetworkManager
         send(uploadData: uploadData)
     }
     
+    func sendScroll(offset: Double)
+    {
+        let scrollOffset = MouseClick(leftMouseClick: false, rightMouseClick: false, mouseDoubleClick: false, scroll: offset)
+        
+        guard let uploadData = try? JSONEncoder().encode(scrollOffset) else {
+            return
+        }
+        send(uploadData: uploadData)
+    }
+    
+    func sendLeftArrow()
+    {
+        let leftArrow = KeyPress(switchTab: false, switchToLaser: false, missionCtrl: false, leftArrow: true, rightArrow: false)
+        
+        guard let uploadData = try? JSONEncoder().encode(leftArrow) else {
+            return
+        }
+        send(uploadData: uploadData)
+    }
+    
+    func sendRightArrow()
+    {
+        let rightArrow = KeyPress(switchTab: false, switchToLaser: false, missionCtrl: false, leftArrow: false, rightArrow: true)
+        
+        guard let uploadData = try? JSONEncoder().encode(rightArrow) else {
+            return
+        }
+        send(uploadData: uploadData)
+    }
+    
     func sendSwitchTab()
     {
-        let switchTab = KeyPress(switchTab: true, switchToLaser: false, missionCtrl: false)
+        let switchTab = KeyPress(switchTab: true, switchToLaser: false, missionCtrl: false, leftArrow: false, rightArrow: false)
         
         guard let uploadData = try? JSONEncoder().encode(switchTab) else {
             return
@@ -52,7 +82,7 @@ extension NetworkManager
     
     func sendSwitchToLaser()
     {
-        let switchToLaser = KeyPress(switchTab: false, switchToLaser: true, missionCtrl: false)
+        let switchToLaser = KeyPress(switchTab: false, switchToLaser: true, missionCtrl: false, leftArrow: false, rightArrow: false)
         
         guard let uploadData = try? JSONEncoder().encode(switchToLaser) else {
             return
@@ -62,7 +92,7 @@ extension NetworkManager
     
     func sendMissionCtrl()
     {
-        let missionCtrl = KeyPress(switchTab: false, switchToLaser: false, missionCtrl: true)
+        let missionCtrl = KeyPress(switchTab: false, switchToLaser: false, missionCtrl: true, leftArrow: false, rightArrow: false)
 
         guard let uploadData = try? JSONEncoder().encode(missionCtrl) else {
             return

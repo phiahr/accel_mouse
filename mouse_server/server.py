@@ -32,6 +32,10 @@ def switchTab():
     pyautogui.press("tab")
     pyautogui.keyUp(ctrlKey)
 
+def scroll(offset):
+    print(offset)
+    pyautogui.scroll(float(offset/20))
+
 async def echo(websocket):
     async for message in websocket:
         data = json.loads(message)
@@ -43,6 +47,8 @@ async def echo(websocket):
                 pyautogui.rightClick()
             elif data['mouseDoubleClick']:
                 pyautogui.doubleClick()
+            elif data['scroll'] != 0:
+                scroll(data['scroll'])
         elif 'switchTab' in data:
             if data['switchTab']:
                 switchTab()
@@ -50,6 +56,10 @@ async def echo(websocket):
                 switchToLaser()
             elif data['missionCtrl']:
                 missionCtrl()
+            elif data['leftArrow']:
+                pyautogui.press('left')
+            elif data['rightArrow']:
+                pyautogui.press('right')
             
         else:
             pitch = -data['pitch']
