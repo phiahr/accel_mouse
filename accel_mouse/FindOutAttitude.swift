@@ -48,8 +48,8 @@ class AttitudeCalculator: NSObject
             // Get magnetometer sensor data
             let accuracy = motion?.magneticField.accuracy
             let m_x = motion!.magneticField.field.x
-            let m_y = -motion!.magneticField.field.y
-            let m_z = -motion!.magneticField.field.z
+            let m_y = motion!.magneticField.field.y
+            let m_z = motion!.magneticField.field.z
             
             
             let attitude = motion!.attitude
@@ -84,12 +84,16 @@ class AttitudeCalculator: NSObject
 //            let Ym = m_y
 //            let Xm = m_x * cos(pitch)-m_y*sin(roll)*sin(pitch)+m_z*cos(roll)*sin(pitch)
 //            let Ym = m_y*cos(roll)+m_z*sin(roll)
-            let Xm = m_x * cos(pitch)+m_y*sin(roll)*sin(pitch)+m_z*cos(roll)*sin(pitch)
-            let Ym = m_y*cos(roll)-m_z*sin(roll)
+            print(m_y, " ", cos(pitch), " ", m_z, " ", sin(pitch))
+            let Xm = m_y*cos(pitch)+m_x*sin(roll)*sin(pitch)-m_z*cos(roll)*sin(pitch)
+            let Ym = m_x*cos(roll)+m_z*sin(roll)
+            
 //            let calYm = m_y*cos(roll)+m_z*
             let psi = -atan2(Ym, Xm)
-            print(psi * 180.0 / .pi)
-            print(yaw * 180.0 / .pi)
+            
+            print(motion?.magneticField.field)
+            print(">>>>> ", psi * 180.0 / .pi)
+            print("<<<<< ", yaw * 180.0 / .pi)
             print("")
 //            print("calc x: ", x)
         }
@@ -114,8 +118,8 @@ class AttitudeCalculator: NSObject
                 if let accelData = self.motion2.accelerometerData, let gyroData = self.motion2.gyroData, let magData = self.motion2.magnetometerData
                 {
                     let a_x = accelData.acceleration.x
-                    let a_y = accelData.acceleration.y
-                    let a_z = accelData.acceleration.z
+                    let a_y = -accelData.acceleration.y
+                    let a_z = -accelData.acceleration.z
                     
                     _ = gyroData.rotationRate.x
                     _ = gyroData.rotationRate.y
@@ -126,10 +130,15 @@ class AttitudeCalculator: NSObject
                     let m_z = -magData.magneticField.z
                     
 //                    print("raw a_x: ", a_x)
-                    let Xm = m_x*cos(self.pitch)+m_y*sin(self.roll)*sin(self.pitch)+m_z*cos(self.roll)*sin(self.pitch)
-                    let Ym = m_y*cos(self.roll)-m_z*sin(self.roll)
+                    let pitch = asin(a_y)
+                    let roll = atan(a_x/a_z)
+                    let Xm = m_x*cos(pitch)+m_y*sin(roll)*sin(pitch)+m_z*cos(roll)*sin(pitch)
+                    let Ym = m_y*cos(roll)-m_z*sin(roll)
+                    
                     
                     let yaw = atan2(Ym,Xm) * 180 / .pi
+                    
+                    print(pitch, ", ", roll)
                     print("s: ", yaw)
 //                    print("2: ",magData.magneticField)
                 }
