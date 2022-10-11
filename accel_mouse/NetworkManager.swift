@@ -11,8 +11,8 @@ import CoreMotion
 class NetworkManager: NSObject, URLSessionDelegate
 {
     let manager = CMMotionManager()
-    var ipAddress = "172.20.10.2"
-    let frequency = 0.2 // 0.01
+    var ipAddress = "172.20.10.8"
+    let frequency = 0.01 // 0.01
     private var webSocket : URLSessionWebSocketTask!
     
     var yawBias = 0.0
@@ -149,6 +149,8 @@ class NetworkManager: NSObject, URLSessionDelegate
     var old_roll = 0.0
     var old_pitch = 0.0
     var old_yaw = 0.0
+    
+    var old_yaw3 = 0.0
 
     func handleMotionUpdates()
     {
@@ -205,26 +207,50 @@ class NetworkManager: NSObject, URLSessionDelegate
             
             
             
-            let estimated_roll = /*k2 * gyro_roll + (1-k) * */(accel_roll)
             let estimated_pitch = /*k2 * gyro_pitch + (1-k) * */(accel_pitch)
-            
+            let estimated_roll = /*k2 * gyro_roll + (1-k) * */(accel_roll)
+
             let Xm = m_x*cos(estimated_pitch)+m_y*sin(estimated_roll)*sin(estimated_pitch)+m_z*cos(estimated_roll)*sin(estimated_pitch)
             let Ym = m_y*cos(estimated_roll)-m_z*sin(estimated_roll)
             
             var mag_yaw = D-atan2(Ym,Xm)
             
+//            mag_yaw += .pi + self.yawBias
+            
+            print("without bias: ", mag_yaw * 180 / .pi)
+            
             if !self.isCalibrated
             {
                 self.yawBias = mag_yaw
                 self.realYawBias = yaw
-                self.isCalibrated = true
+                self.isCalibrated	 = true
             }
             
+            print(mag_yaw - self.yawBias)
+            if(mag_yaw - self.yawBias < -(.pi))
+            {
+                mag_yaw += 2 * .pi
+            }
+            else if (mag_yaw - self.yawBias > .pi){
+                mag_yaw -= 2 * .pi
+            }
+//            if(mag_yaw - self.yawBias < -(.pi)) {
+//                print("HELLOW")
+//                self.yawBias = -(.pi+self.old_yaw)
+////                mag_yaw +=
+//            }
+//            else if mag_yaw - self.yawBias > .pi{
+//                self.yawBias = .pi+self.old_yaw
+//            }
             mag_yaw -= self.yawBias
-                        
+            print("with bias: ", mag_yaw * 180 / .pi)
+            
+            
+//            print("corrected: ", mag_yaw * 180 / .pi)
             let gyro_yaw = self.old_yaw + r * self.frequency
             
-            let estimated_yaw = k * gyro_yaw + (1-k) * (mag_yaw)
+            //let estimated_yaw = k * gyro_yaw + (1-k) * (mag_yaw)
+            let estimated_yaw = k*gyro_yaw+(1-k)*mag_yaw
             
             self.old_roll = estimated_roll
             self.old_pitch = estimated_pitch
