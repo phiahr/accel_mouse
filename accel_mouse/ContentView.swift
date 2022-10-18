@@ -24,15 +24,7 @@ struct ContentView: View {
     }
     var body: some View {
         VStack{
-//            Spacer()
-//            Button("Start Motion Updates") {
-//                nManager.startMotionUpdates()
-//            }
-//                .padding()
-//            Button("Send Data to Server") {
-////                nManager.send(attitude:)
-//            }
-//                .padding()
+
             HStack{
                 Spacer()
                 Image(systemName: "airtag.fill")

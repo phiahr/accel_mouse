@@ -12,8 +12,6 @@
 		353C3FF328EB43310005411F /* Attitude.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353C3FF228EB43310005411F /* Attitude.swift */; };
 		353C3FF528EB43480005411F /* MouseClick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 353C3FF428EB43480005411F /* MouseClick.swift */; };
 		3582BB9C28E8615900EE5E15 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3582BB9B28E8615900EE5E15 /* NetworkManager.swift */; };
-		35A24F9328EA2EF900201091 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A24F9228EA2EF900201091 /* Test.swift */; };
-		35DF6BEE28F3146000A6F5B7 /* FindOutAttitude.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DF6BED28F3146000A6F5B7 /* FindOutAttitude.swift */; };
 		35F42B9228E7171900077DF8 /* accel_mouseApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F42B9128E7171900077DF8 /* accel_mouseApp.swift */; };
 		35F42B9428E7171900077DF8 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35F42B9328E7171900077DF8 /* ContentView.swift */; };
 		35F42B9628E7171C00077DF8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 35F42B9528E7171C00077DF8 /* Assets.xcassets */; };
@@ -26,8 +24,6 @@
 		353C3FF228EB43310005411F /* Attitude.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attitude.swift; sourceTree = "<group>"; };
 		353C3FF428EB43480005411F /* MouseClick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MouseClick.swift; sourceTree = "<group>"; };
 		3582BB9B28E8615900EE5E15 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
-		35A24F9228EA2EF900201091 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
-		35DF6BED28F3146000A6F5B7 /* FindOutAttitude.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindOutAttitude.swift; sourceTree = "<group>"; };
 		35F42B8E28E7171900077DF8 /* accel_mouse.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = accel_mouse.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		35F42B9128E7171900077DF8 /* accel_mouseApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accel_mouseApp.swift; sourceTree = "<group>"; };
 		35F42B9328E7171900077DF8 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -80,8 +76,6 @@
 				3582BB9B28E8615900EE5E15 /* NetworkManager.swift */,
 				350A2A2628ECCEB30045BC1F /* MouseAndKeyEvents.swift */,
 				350A2A2828ECCEC30045BC1F /* Model */,
-				35A24F9228EA2EF900201091 /* Test.swift */,
-				35DF6BED28F3146000A6F5B7 /* FindOutAttitude.swift */,
 				35F42B9528E7171C00077DF8 /* Assets.xcassets */,
 				35F42B9728E7171C00077DF8 /* Preview Content */,
 			);
@@ -170,9 +164,7 @@
 				353C3FF328EB43310005411F /* Attitude.swift in Sources */,
 				350A2A2528ECB1680045BC1F /* KeyPress.swift in Sources */,
 				353C3FF528EB43480005411F /* MouseClick.swift in Sources */,
-				35DF6BEE28F3146000A6F5B7 /* FindOutAttitude.swift in Sources */,
 				350A2A2728ECCEB30045BC1F /* MouseAndKeyEvents.swift in Sources */,
-				35A24F9328EA2EF900201091 /* Test.swift in Sources */,
 				35F42B9428E7171900077DF8 /* ContentView.swift in Sources */,
 				35F42B9228E7171900077DF8 /* accel_mouseApp.swift in Sources */,
 			);
@@ -303,7 +295,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"accel_mouse/Preview Content\"";
-				DEVELOPMENT_TEAM = LF96G26UXS;
+				DEVELOPMENT_TEAM = 98F33Z222S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -317,7 +309,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "philipp.accel-mouse";
+				PRODUCT_BUNDLE_IDENTIFIER = xhr1s.test123last;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -333,7 +325,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"accel_mouse/Preview Content\"";
-				DEVELOPMENT_TEAM = LF96G26UXS;
+				DEVELOPMENT_TEAM = 98F33Z222S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -347,7 +339,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "philipp.accel-mouse";
+				PRODUCT_BUNDLE_IDENTIFIER = xhr1s.test123last;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
